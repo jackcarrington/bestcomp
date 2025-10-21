@@ -1,0 +1,114 @@
+# Netlify Deployment Exclusions
+# This file tells Netlify what NOT to deploy to production
+# Only production-ready files should be deployed
+
+# Documentation and development notes
+*.md
+README*
+CHANGELOG*
+LICENSE*
+AUTHORS*
+CONTRIBUTING*
+docs/
+documentation/
+
+# Development directories
+.astro/
+.netlify/
+.claude/
+.vscode/
+.idea/
+.git/
+
+# Configuration and development files
+.env*
+.gitignore
+.editorconfig
+.eslintrc*
+.prettierrc*
+tsconfig*.json
+vite.config*
+rollup.config*
+
+# Development tools and testing
+test/
+tests/
+__tests__/
+spec/
+specs/
+coverage/
+.nyc_output/
+jest.config*
+vitest.config*
+playwright.config*
+cypress/
+cypress.config*
+.playwright-mcp/
+
+# Build tools and package management
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.pnpm-store/
+node_modules/
+
+# Logs and temporary files
+*.log
+logs/
+tmp/
+temp/
+.cache/
+.temp/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Development artifacts
+audit/
+attached_assets/
+app/
+screenshots/
+mockups/
+
+# Backup and version files
+*.bak
+*.backup
+*.orig
+*.old
+*.tmp
+
+# CI/CD files (if any)
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+Dockerfile*
+docker-compose*
+
+# Local development configurations
+.replit
+replit.nix
+
+# Drizzle ORM development files
+drizzle/
+migrations/
+*.db
+*.sqlite
+*.sql
+
+# Security and environment examples
+.env.example
+.env.template
+config.example*
+
+# Development scripts and utilities
+scripts/
+dev-tools/
+utilities/
+
+# Source maps in production (optional - remove if you want them)
+*.map

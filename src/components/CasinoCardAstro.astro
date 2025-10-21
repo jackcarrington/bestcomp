@@ -1,0 +1,398 @@
+---
+// CasinoCard Astro Component
+// Converted from CasinoCard.jsx with 100% visual and functional parity
+// Supports both desktop and mobile responsive views with ribbon system
+
+// ✅ SIMPLIFIED: Clean URL shortening for casino affiliate links
+import { generateCleanUrl } from '../lib/url-shortener.ts';
+
+interface Props {
+  casino: any;
+  index: number;
+}
+
+const { casino, index } = Astro.props;
+
+// Generate star rating system exactly as specified
+const generateStars = (ratingStars: number) => {
+  const starsRating = Math.min(Math.max(ratingStars, 0), 5);
+  const fullStars = Math.floor(starsRating);
+  const hasHalfStar = starsRating % 1 >= 0.5;
+
+  let stars = '★'.repeat(fullStars);
+  if (hasHalfStar && fullStars < 5) {
+    stars += '☆';
+  }
+  while (stars.length < 5) {
+    stars += '☆';
+  }
+  return stars;
+};
+
+// Get ribbon data based on original specifications and database ribbonText
+const getRibbonData = () => {
+  // First card (index 0) always gets gold ribbon
+  if (index === 0) {
+    return { text: 'NO MAX CASH OUT', cssClass: 'ribbon-gold' };
+  }
+
+  // Use custom ribbon text from database if available for other cards
+  if (casino.ribbonText) {
+    const text = casino.ribbonText.toUpperCase();
+
+    // Color mapping based on ribbon text content (no gold for non-first cards)
+    if (text.includes('NO WAGERING') || text.includes('WAGERING')) {
+      return { text, cssClass: 'ribbon-orange' }; // Orange for no wagering
+    }
+    if (text.includes('POPULAR') || text.includes('MOST')) {
+      return { text, cssClass: 'ribbon-purple' }; // Purple for popular
+    }
+
+    // Default purple for all other custom text (including "No Max Cash")
+    return { text, cssClass: 'ribbon-purple' };
+  }
+
+  // Default ribbon text based on position when no custom text
+  if (index === 1) {
+    return { text: 'MOST POPULAR', cssClass: 'ribbon-purple' };
+  }
+
+  return { text: 'BEST BONUS', cssClass: 'ribbon-purple' };
+};
+
+// Helper function to determine if bonus amount is effectively zero/empty
+const hasValidBonus = () => {
+  if (!casino.bonusAmount || casino.bonusAmount === 0) return false;
+  if (!casino.bonus || casino.bonus === '£0 Welcome Bonus' || casino.bonus.includes('£0')) return false;
+  return true;
+};
+
+// Helper function to get the main bonus display text
+const getMainBonusText = () => {
+  const hasBonus = hasValidBonus();
+  const hasSpins = casino.freeSpins && casino.freeSpins > 0;
+
+  if (hasBonus) {
+    return casino.bonus;
+  } else if (hasSpins) {
+    return `${casino.freeSpins} Free Spins`;
+  } else {
+    return 'No Deposit Bonus';
+  }
+};
+
+// ✅ SIMPLIFIED: Use clean /go/slug URLs for all casinos
+// This provides consistent short URLs that map to database affiliate links
+const trackingUrl = casino?.slug ? `/go/${casino.slug}` : generateCleanUrl(casino);
+
+const ribbonData = getRibbonData();
+const stars = generateStars(casino.ratingStars);
+const mainBonusText = getMainBonusText();
+const validBonus = hasValidBonus();
+
+// No CSP violations - using CSS custom properties instead of inline styles
+---
+
+<style>
+  .ribbon-element {
+    background-color: var(--ribbon-bg);
+    color: var(--ribbon-text);
+  }
+</style>
+
+<div class="casino-card-component">
+  <a
+    href={trackingUrl}
+    target="_blank"
+    rel="sponsored nofollow noopener noreferrer"
+    class={`relative overflow-hidden casino-card-hover cursor-pointer block casino-card-delay-${index} casino-card-link`}
+  >
+    <!-- Mobile Layout: Dark gradient cards with 2-column layout -->
+    <div class="lg:hidden bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg">
+      <!-- Mobile Two-Column Grid -->
+      <div class="grid grid-cols-2 h-full relative">
+        <!-- Left Column: Logo + Rating -->
+        <div class="bg-gray-800 p-2 pt-[30px] flex flex-col justify-around items-center">
+          <!-- Mobile Ribbon - Positioned absolutely within left column -->
+          <div
+            class={`absolute top-0 left-0 h-[22px] py-[2px] pl-[12px] pr-[12px] text-xs font-bold leading-[18px] block z-50 shadow-lg ribbon-element ribbon-point ${ribbonData.cssClass}`}
+          >
+            <span>{ribbonData.text}</span>
+            <div class="absolute top-0 w-0 h-0 pointer-events-none">
+              <!-- This element is for the pointed end effect -->
+            </div>
+          </div>
+          <img
+            src={casino.logo}
+            alt={`${casino.name} Logo`}
+            class="max-w-[100px] max-h-[60px] object-contain casino-logo"
+          />
+
+          <!-- Stars and Score -->
+          <div class="flex items-center justify-around mb-1 w-full">
+            <div class="text-center">
+              <div class="text-[var(--casino-gold)] pl-[8px] pr-[8px] text-[18px]">
+                {stars}
+              </div>
+              <div class="text-white/70 text-[12px] mt-1">
+                {casino.reviewCount?.toLocaleString() || '0'} Votes
+              </div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-white pl-[8px] pr-[8px]">
+                {casino.score || casino.rating}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Bonus + CTA -->
+        <div class="bg-gray-900 p-2 flex flex-col justify-between h-full">
+          <div class="text-center flex-grow flex flex-col justify-center">
+            <div class="text-white/70 text-xs font-medium">Welcome Bonus</div>
+            <div class="font-bold text-[18px] text-white mt-1">
+              {mainBonusText}
+            </div>
+            {
+              validBonus && casino.freeSpins > 0 && (
+                <div class="text-[16px] text-white font-normal">+ {casino.freeSpins} Free Spins</div>
+              )
+            }
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <div
+              class="claim-bonus-button w-full font-bold py-2 px-3 rounded-lg text-sm bg-[var(--casino-purple)] hover:bg-[var(--casino-purple)]/80 text-white transition-colors text-center cursor-pointer"
+            >
+              {casino.actionButtonText || 'CLAIM BONUS'}
+            </div>
+
+            <div class="text-center text-white text-[11px]">
+              Min. Deposit - £{casino.minDeposit || 10}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Terms -->
+      <div class="bg-gray-800 px-2 py-2 border-t border-gray-700">
+        <p class="leading-relaxed terms-text">
+          {casino.terms || casino.termsConditions || 'Terms and conditions apply. 18+ only. Please gamble responsibly.'}
+        </p>
+      </div>
+    </div>
+
+    <!-- Desktop Layout: White cards with table structure -->
+    <div class="hidden lg:block bg-white/95 backdrop-blur-md border-2 border-[var(--casino-gold)] shadow-2xl relative">
+      <!-- Desktop Ribbon - Positioned absolutely at top-left -->
+      <div
+        class={`absolute top-0 left-0 h-[22px] py-[2px] pl-[12px] pr-[12px] text-xs font-bold leading-[18px] block z-50 shadow-lg ribbon-element ribbon-point ${ribbonData.cssClass}`}
+      >
+        <span>{ribbonData.text}</span>
+        <div class="absolute top-0 w-0 h-0 pointer-events-none">
+          <!-- This element is for the pointed end effect -->
+        </div>
+      </div>
+
+      <!-- Desktop Grid Layout -->
+      <div class="grid grid-cols-12 gap-4 items-center p-6 bg-[#f3f4f6]">
+        <!-- Casino Logo (Columns 1-3) -->
+        <div class="col-span-3 flex justify-center">
+          <img
+            src={casino.logo}
+            alt={`${casino.name} Logo`}
+            class="max-w-[150px] max-h-[80px] object-contain casino-logo"
+          />
+        </div>
+
+        <!-- Bonus Information (Columns 4-6) -->
+        <div class="col-span-3 text-center">
+          <div class="text-3xl font-bold text-gray-900 mb-1">
+            {mainBonusText}
+          </div>
+          {
+            validBonus && casino.freeSpins > 0 && (
+              <div class="text-xl font-medium text-gray-700">+ {casino.freeSpins} Free Spins</div>
+            )
+          }
+        </div>
+
+        <!-- Star Rating (Columns 7-8) -->
+        <div class="col-span-2 text-center">
+          <div class="text-[var(--casino-gold)] text-2xl mb-1">
+            {stars}
+          </div>
+          <div class="text-gray-500 text-sm">
+            {casino.reviewCount?.toLocaleString() || '0'} Votes
+          </div>
+        </div>
+
+        <!-- Score (Columns 9-10) -->
+        <div class="col-span-2 text-center">
+          <div class="text-4xl font-bold text-gray-900">
+            {casino.score || casino.rating}
+          </div>
+        </div>
+
+        <!-- Action Buttons (Columns 11-12) -->
+        <div class="col-span-2 text-center">
+          <div
+            class="claim-bonus-button inline-flex items-center justify-center gap-2 whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 w-full font-bold py-4 px-6 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg mb-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 cursor-pointer"
+          >
+            CLAIM BONUS
+          </div>
+          <div
+            class="play-button text-[var(--casino-purple)] hover:text-[var(--casino-pink)] transition-colors text-sm font-medium flex items-center justify-center gap-1 mx-auto cursor-pointer"
+          >
+            Play {casino.name || 'OJO'}
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop Terms -->
+      <div class="bg-gray-100 px-6 py-4 subtle-footer-styles">
+        <p class="text-xs text-gray-600 leading-relaxed">
+          {casino.terms || casino.termsConditions || 'Terms and conditions apply. 18+ only. Please gamble responsibly.'}
+        </p>
+      </div>
+    </div>
+  </a>
+</div>
+
+<style>
+  /* Casino Card component styles - exactly matching React version */
+  .casino-card-component {
+    display: block;
+  }
+
+  /* Ribbon styles */
+  .ribbon-element {
+    position: relative;
+  }
+
+  .ribbon-point::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -12px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 11px 0 11px 12px;
+    border-color: transparent transparent transparent inherit;
+  }
+
+  .ribbon-gold .ribbon-point::after {
+    border-left-color: #ffd700;
+  }
+
+  /* Mobile-specific ribbon styles */
+  .ribbon-element {
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+  }
+
+  /* Mobile card shadows */
+  .p-2 {
+    box-shadow: rgba(0, 0, 0, 0.3) 5px 5px 15px;
+  }
+
+  /* Mobile ribbon pointed end - Gold */
+  .ribbon-gold .ribbon-point::after,
+  .ribbon-gold::after {
+    width: 0px;
+    height: 0px;
+    right: -12px;
+    border-top: 11px solid transparent;
+    border-bottom: 11px solid transparent;
+    border-left: 12px solid #ffa500;
+  }
+
+  /* Mobile ribbon pointed end - Purple */
+  .ribbon-purple .ribbon-point::after,
+  .ribbon-purple::after {
+    width: 0px;
+    height: 0px;
+    right: -12px;
+    border-top: 11px solid transparent;
+    border-bottom: 11px solid transparent;
+    border-left: 12px solid rgb(180, 0, 120);
+  }
+
+  /* Mobile container positioning */
+  .pt-\[30px\] {
+    position: relative;
+  }
+
+  /* Casino card hover effects */
+  .casino-card-hover {
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .casino-card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Staggered animation delays */
+  .casino-card-delay-0 {
+    animation-delay: 0ms;
+  }
+  .casino-card-delay-1 {
+    animation-delay: 100ms;
+  }
+  .casino-card-delay-2 {
+    animation-delay: 200ms;
+  }
+  .casino-card-delay-3 {
+    animation-delay: 300ms;
+  }
+  .casino-card-delay-4 {
+    animation-delay: 400ms;
+  }
+  .casino-card-delay-5 {
+    animation-delay: 500ms;
+  }
+
+  /* Button hover effects */
+  .claim-bonus-button:hover,
+  .play-button:hover {
+    transform: scale(1.05);
+  }
+
+  /* Terms text styling */
+  .terms-text {
+    font-size: 11px;
+    color: rgb(156 163 175);
+    line-height: 1.4;
+  }
+
+  @media (min-width: 1024px) {
+    .terms-text {
+      font-size: 12px;
+    }
+  }
+
+  /* Desktop subtle footer styles */
+  .subtle-footer-styles {
+    border-top: 1px solid rgb(229 231 235);
+  }
+
+  /* Image error handling */
+  .casino-logo {
+    transition: opacity 0.3s ease;
+  }
+
+  .casino-logo.error {
+    opacity: 0.8;
+  }
+</style>
+
+<!--
+  Google Ads Compliant: Removed all custom elements and click manipulation
+  Using standard HTML with proper link structure - no JavaScript needed
+-->

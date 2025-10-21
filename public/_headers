@@ -1,0 +1,38 @@
+# Security headers for all pages - highest priority
+/*
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  X-Content-Type-Options: nosniff
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; frame-src 'none'; img-src 'self' data: https://images.unsplash.com https://plus.unsplash.com; font-src 'self' https://fonts.gstatic.com; style-src 'self' https://fonts.googleapis.com; connect-src 'self';
+
+# Static assets cache headers
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/images/*
+  Cache-Control: public, max-age=604800
+
+# Static files (favicon, robots.txt, etc.)
+/favicon.*
+  Cache-Control: public, max-age=86400
+
+/robots.txt
+  Cache-Control: public, max-age=86400
+
+/sitemap*.xml
+  Cache-Control: public, max-age=3600
+
+# API routes - no caching
+/api/*
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+# Security Notes:
+# - X-XSS-Protection removed (deprecated in 2025, can introduce vulnerabilities)
+# - CSP handled by Astro experimental CSP with experimentalStaticHeaders for SSR
+# - X-Frame-Options DENY kept as legacy fallback for older browsers
+# - Strict-Transport-Security enforces HTTPS with preload for maximum security
+# - All headers follow 2025 security best practices per Perplexity recommendations

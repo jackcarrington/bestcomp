@@ -1,0 +1,208 @@
+---
+// Database-driven content section with fallback to static content
+import { neon } from '@netlify/neon';
+import { neon as regularNeon } from '@neondatabase/serverless';
+
+export interface Props {
+  sectionKey?: string; // Which content section to load from database
+}
+
+const { sectionKey = 'homepage_rating_section' } = Astro.props;
+
+// Default static content as fallback
+const defaultContent = {
+  sectionTitle: 'How we rate online casinos',
+  sectionSubtitle: null,
+  contentItems: [
+    {
+      itemKey: 'security_licensing',
+      itemTitle: 'Security & Licensing',
+      itemDescription:
+        'We verify that all casinos hold valid UK gambling licenses and use advanced SSL encryption to protect your data.',
+      itemIcon: '🛡️',
+      backgroundColor: 'bg-[var(--casino-purple)]/20',
+    },
+    {
+      itemKey: 'game_selection',
+      itemTitle: 'Game Selection',
+      itemDescription:
+        'Our experts evaluate the variety and quality of slots, table games, and live dealer options from top providers.',
+      itemIcon: '🎮',
+      backgroundColor: 'bg-[var(--casino-pink)]/20',
+    },
+    {
+      itemKey: 'bonuses_promotions',
+      itemTitle: 'Bonuses & Promotions',
+      itemDescription:
+        'We analyse welcome bonuses, ongoing promotions, and loyalty programmes to find the best value for players.',
+      itemIcon: '💰',
+      backgroundColor: 'bg-[var(--casino-gold)]/20',
+    },
+    {
+      itemKey: 'payout_speed',
+      itemTitle: 'Payout Speed',
+      itemDescription: 'We test withdrawal times and banking options to ensure fast and reliable payouts when you win.',
+      itemIcon: '⚡',
+      backgroundColor: 'bg-green-500/20',
+    },
+  ],
+  trustIndicators: [
+    {
+      indicatorKey: 'years_experience',
+      indicatorText: '15+ Years Experience',
+      backgroundColor: 'bg-[var(--casino-purple)]/20',
+    },
+    {
+      indicatorKey: 'reviewed_casinos',
+      indicatorText: '1000+ Reviewed Casinos',
+      backgroundColor: 'bg-[var(--casino-pink)]/20',
+    },
+    {
+      indicatorKey: 'independent_testing',
+      indicatorText: 'Independent Testing',
+      backgroundColor: 'bg-[var(--casino-gold)]/20',
+    },
+  ],
+  trustDescription:
+    'Our team of casino experts has over 50 years of combined experience in the gambling industry. We personally test each casino, make real deposits and withdrawals to deliver authentic, unbiased reviews.',
+};
+
+// Try to load content from database
+let contentData = defaultContent;
+
+try {
+  // Use appropriate Neon client based on environment
+  let sql;
+  if (process.env.NETLIFY_DATABASE_URL || process.env.NETLIFY_DATABASE_URL_UNPOOLED) {
+    sql = neon();
+  } else if (process.env.DATABASE_URL) {
+    sql = regularNeon(process.env.DATABASE_URL);
+  }
+
+  if (sql) {
+    // Load content section
+    const sectionResults = await sql`
+      SELECT * FROM content_sections
+      WHERE section_key = ${sectionKey} AND is_active = true
+      LIMIT 1
+    `;
+
+    if (sectionResults.length > 0) {
+      const section = sectionResults[0];
+
+      // Load content items for this section
+      const itemsResults = await sql`
+        SELECT * FROM content_items
+        WHERE section_id = ${section.id} AND is_active = true
+        ORDER BY display_order ASC, id ASC
+      `;
+
+      // Load trust indicators for this section
+      const indicatorsResults = await sql`
+        SELECT * FROM trust_indicators
+        WHERE section_id = ${section.id} AND is_active = true
+        ORDER BY display_order ASC, id ASC
+      `;
+
+      // Build the content data from database
+      contentData = {
+        sectionTitle: section.section_title || section.sectionTitle,
+        sectionSubtitle: section.section_subtitle || section.sectionSubtitle,
+        contentItems: itemsResults.map(item => ({
+          itemKey: item.item_key || item.itemKey,
+          itemTitle: item.item_title || item.itemTitle,
+          itemDescription: item.item_description || item.itemDescription,
+          itemIcon: item.item_icon || item.itemIcon,
+          backgroundColor: item.background_color || item.backgroundColor,
+        })),
+        trustIndicators: indicatorsResults.map(indicator => ({
+          indicatorKey: indicator.indicator_key || indicator.indicatorKey,
+          indicatorText: indicator.indicator_text || indicator.indicatorText,
+          backgroundColor: indicator.background_color || indicator.backgroundColor,
+        })),
+        trustDescription: defaultContent.trustDescription, // Could be made dynamic too
+      };
+    }
+  }
+} catch {
+  // Fall back to default static content
+}
+
+// Split content items into two columns for display
+const leftColumnItems = contentData.contentItems.slice(0, Math.ceil(contentData.contentItems.length / 2));
+const rightColumnItems = contentData.contentItems.slice(Math.ceil(contentData.contentItems.length / 2));
+---
+
+<section class="relative z-10 px-4 mb-16" id="reviews">
+  <div class="max-w-4xl mx-auto">
+    <div class="bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 p-4 sm:p-6 lg:p-12">
+      <h2
+        class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 text-center bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent"
+      >
+        {contentData.sectionTitle}
+      </h2>
+
+      {
+        contentData.sectionSubtitle && (
+          <p class="text-lg text-white/90 text-center mb-8">{contentData.sectionSubtitle}</p>
+        )
+      }
+
+      <div class="grid md:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
+        <div class="space-y-4 sm:space-y-6">
+          {
+            leftColumnItems.map(item => (
+              <div class="flex items-start space-x-4">
+                <div
+                  class={`w-10 h-10 sm:w-12 sm:h-12 ${item.backgroundColor || 'bg-gray-500/20'} rounded-xl flex items-center justify-center flex-shrink-0`}
+                >
+                  <span class="text-xl sm:text-2xl">{item.itemIcon || '📋'}</span>
+                </div>
+                <div>
+                  <h3 class="text-lg sm:text-xl font-semibold mb-2">{item.itemTitle}</h3>
+                  <p class="text-white/80 leading-relaxed">{item.itemDescription}</p>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+
+        <div class="space-y-4 sm:space-y-6">
+          {
+            rightColumnItems.map(item => (
+              <div class="flex items-start space-x-4">
+                <div
+                  class={`w-10 h-10 sm:w-12 sm:h-12 ${item.backgroundColor || 'bg-gray-500/20'} rounded-xl flex items-center justify-center flex-shrink-0`}
+                >
+                  <span class="text-xl sm:text-2xl">{item.itemIcon || '📋'}</span>
+                </div>
+                <div>
+                  <h3 class="text-lg sm:text-xl font-semibold mb-2">{item.itemTitle}</h3>
+                  <p class="text-white/80 leading-relaxed">{item.itemDescription}</p>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="p-4 sm:p-6">
+        <h3 class="text-xl sm:text-2xl font-semibold mb-4 text-center">Why trust our reviews?</h3>
+        <p class="text-white/90 leading-relaxed text-center mb-6">
+          {contentData.trustDescription}
+        </p>
+        {
+          contentData.trustIndicators && contentData.trustIndicators.length > 0 && (
+            <div class="flex flex-wrap justify-center gap-4 text-sm font-medium">
+              {contentData.trustIndicators.map(indicator => (
+                <span class={`${indicator.backgroundColor || 'bg-gray-500/20'} px-4 py-2 rounded-full`}>
+                  {indicator.indicatorText}
+                </span>
+              ))}
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>

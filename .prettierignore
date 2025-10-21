@@ -1,0 +1,10 @@
+dist/
+.astro/
+node_modules/
+*.min.js
+*.min.css
+package-lock.json
+.netlify/
+build/
+coverage/
+CHANGELOG.md

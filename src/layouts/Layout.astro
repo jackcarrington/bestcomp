@@ -1,0 +1,84 @@
+---
+import { sanitizeMetaUrl, createCanonicalUrl } from '../lib/url-sanitizer.ts';
+
+export interface Props {
+  title: string;
+  description?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogUrl?: string;
+  canonicalUrl?: string;
+  noIndex?: boolean;
+}
+
+const {
+  title,
+  description,
+  ogTitle = title,
+  ogDescription = description,
+  ogUrl,
+  canonicalUrl,
+  noIndex = false,
+} = Astro.props;
+
+// Securely generate URLs to prevent injection attacks
+const currentCanonical = canonicalUrl
+  ? sanitizeMetaUrl(canonicalUrl, Astro.url.pathname)
+  : createCanonicalUrl(Astro.url);
+
+const safeOgUrl = ogUrl ? sanitizeMetaUrl(ogUrl, Astro.url.pathname) : createCanonicalUrl(Astro.url);
+
+// CSP is now handled by Netlify CSP Nonce plugin in netlify.toml
+// Middleware enhances the plugin with additional security directives
+---
+
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- CSP nonce is automatically handled by Netlify CSP plugin -->
+
+    <!-- Security headers are now set via /public/_headers file -->
+
+    <title>{title}</title>
+
+    {description && <meta name="description" content={description} />}
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={currentCanonical} />
+
+    <!-- Sitemap -->
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={ogTitle} />
+    {ogDescription && <meta property="og:description" content={ogDescription} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={safeOgUrl} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={ogTitle} />
+    {ogDescription && <meta name="twitter:description" content={ogDescription} />}
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/favicon.ico" />
+
+    <!-- Google Fonts - Brand Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;400;600;700&family=Public+Sans:wght@400;600;700&family=Open+Sans:wght@400;500;600;700&family=DM+Serif+Text:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

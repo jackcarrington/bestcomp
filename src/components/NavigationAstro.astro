@@ -1,0 +1,103 @@
+---
+// Pure Astro Navigation component with native JavaScript interactivity
+---
+
+<div class="nav-component">
+  <nav class="relative z-50 bg-gray-900/80 backdrop-blur-md border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <a href="/" class="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-300">
+          <span class="text-white font-bold text-lg">FindCasinoSites</span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center space-x-12">
+          <a
+            href="#casinos"
+            class="text-white/80 hover:text-white transition-colors duration-300 font-medium px-4 py-2 rounded-lg hover:bg-white/10"
+          >
+            Top Casinos
+          </a>
+          <a
+            href="/contact"
+            class="text-white/80 hover:text-white transition-colors duration-300 font-medium px-4 py-2 rounded-lg hover:bg-white/10"
+          >
+            Contact
+          </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn md:hidden p-2" aria-label="Toggle mobile menu">
+          <svg class="menu-icon w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+          <svg class="close-icon w-6 h-6 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu md:hidden bg-gray-900/95 backdrop-blur-md border-t border-white/10 hidden">
+      <div class="px-4 py-6 space-y-2">
+        <a
+          href="#casinos"
+          class="mobile-link block text-white/80 hover:text-white transition-colors duration-300 font-medium py-4 px-2 rounded-lg hover:bg-white/10"
+        >
+          Top Casinos
+        </a>
+        <a
+          href="/contact"
+          class="mobile-link block text-white/80 hover:text-white transition-colors duration-300 font-medium py-4 px-2 rounded-lg hover:bg-white/10"
+        >
+          Contact
+        </a>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<script>
+  /* eslint-disable prettier/prettier */
+  // Google Ads Compliant: Minimal mobile menu functionality
+  function initMobileMenu() {
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    const menuIcon = document.querySelector('.menu-icon');
+    const closeIcon = document.querySelector('.close-icon');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+
+    function toggleMenu() {
+      const isHidden = mobileMenu?.classList.contains('hidden');
+      mobileMenu?.classList.toggle('hidden', !isHidden);
+      menuIcon?.classList.toggle('hidden', isHidden);
+      closeIcon?.classList.toggle('hidden', !isHidden);
+    }
+
+    mobileMenuBtn?.addEventListener('click', toggleMenu);
+
+    mobileLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        mobileMenu?.classList.add('hidden');
+        menuIcon?.classList.remove('hidden');
+        closeIcon?.classList.add('hidden');
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !mobileMenu?.classList.contains('hidden')) {
+        mobileMenu?.classList.add('hidden');
+        menuIcon?.classList.remove('hidden');
+        closeIcon?.classList.add('hidden');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileMenu);
+  } else {
+    initMobileMenu();
+  }
+</script>

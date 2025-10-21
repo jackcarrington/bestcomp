@@ -1,0 +1,108 @@
+---
+import CasinoCardAstro from './CasinoCardAstro.astro';
+
+interface Props {
+  initialCasinos?: any[];
+}
+
+const { initialCasinos = [] } = Astro.props;
+---
+
+<div class="casino-list-component">
+  <section class="relative z-20 lg:px-4 mb-16" id="casinos">
+    <div class="lg:max-w-7xl lg:mx-auto">
+      <!-- Desktop Table Header - CRITICAL: Only visible on desktop -->
+      <div
+        class="hidden lg:grid lg:grid-cols-12 bg-gray-900/80 backdrop-blur-md rounded-t-2xl px-6 py-4 border border-white/20 border-b-0 mb-0"
+      >
+        <div class="col-span-3 text-center font-semibold text-white">Casino</div>
+        <div class="col-span-3 text-center font-semibold text-white">Welcome Bonus</div>
+        <div class="col-span-2 text-center font-semibold text-white">Rating</div>
+        <div class="col-span-2 text-center font-semibold text-white">Score</div>
+        <div class="col-span-2 text-center font-semibold text-white">Action</div>
+      </div>
+
+      <!-- Casino Cards Container - Using CasinoCardAstro component -->
+      <div class="casino-cards-container space-y-0 lg:space-y-0">
+        {
+          initialCasinos.map((casino, index) => (
+            <div class="casino-card-wrapper" data-casino-id={casino.id} data-casino-index={index}>
+              <CasinoCardAstro casino={casino} index={index} />
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Results Summary -->
+      <div class="results-summary mt-6 text-center text-sm text-gray-300">
+        Showing <span class="showing-count">0</span> of <span class="total-count">0</span> casinos
+      </div>
+
+      <!-- Advertising Notice -->
+      <div class="text-center text-xs text-white/60 mt-8">
+        Advertising Notice: This page contains affiliate links. We may receive a commission if you click on our links.
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  /* eslint-disable prettier/prettier */
+  // Google Ads Compliant: Simple casino list counter scoped to component instances
+  function updateCasinoCounters() {
+    // Find all casino list component instances
+    const casinoListWrappers = document.querySelectorAll('.casino-list-component');
+
+    casinoListWrappers.forEach((wrapper) => {
+      // Count casino cards within this specific wrapper
+      const casinoCards = wrapper.querySelectorAll('.casino-card-wrapper');
+      const totalCount = casinoCards.length;
+
+      // Update showing count elements within this wrapper only
+      const showingCountElements = wrapper.querySelectorAll('.showing-count');
+      const totalCountElements = wrapper.querySelectorAll('.total-count');
+
+      showingCountElements.forEach((element) => {
+        element.textContent = totalCount.toString();
+      });
+
+      totalCountElements.forEach((element) => {
+        element.textContent = totalCount.toString();
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateCasinoCounters);
+  } else {
+    updateCasinoCounters();
+  }
+</script>
+
+<style>
+  /* CSS Variables for casino colors - matching React version exactly */
+  :root {
+    --casino-purple: #b40078;
+    --casino-pink: #e91e63;
+    --casino-gold: #ffd700;
+  }
+
+  /* Results summary styling */
+  .results-summary {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: rgb(209 213 219);
+  }
+
+  /* Section spacing and styling */
+  .casino-cards-container {
+    position: relative;
+  }
+
+  /* Ensure proper desktop table layout */
+  .hidden.lg\\:grid {
+    border-radius: 0.75rem 0.75rem 0 0;
+    margin-bottom: 0;
+  }
+</style>

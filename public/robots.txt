@@ -1,0 +1,25 @@
+# FindCasinoSites.co.uk - Robots.txt
+# Last updated: 2025-01-24
+# Allow all crawlers including AdsBot for Google Ads compliance
+
+User-agent: *
+Allow: /
+
+# Block affiliate redirects from all crawlers
+Disallow: /go/
+Disallow: /outbound-link/
+Disallow: /refer/
+
+# Block URL parameters that create duplicate content
+Disallow: /*?utm_*
+Disallow: /*&utm_*
+Disallow: /*?click_id=*
+Disallow: /*&click_id=*
+Disallow: /*?ref=*
+Disallow: /*&ref=*
+
+# Crawl delay (optional - helps prevent server overload)
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://findcasinosites.co.uk/sitemap-index.xml

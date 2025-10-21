@@ -1,0 +1,112 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/global.css';
+
+// SEO Metadata - TopComGames Placeholder
+const title = 'TopComGames - Your Premium Gaming Destination | Coming Soon';
+const description =
+  'TopComGames - Discover the best online casinos, exclusive bonuses, and gaming entertainment. Launching soon with curated casino reviews and offers.';
+const ogTitle = 'TopComGames - Premium Gaming Platform Coming Soon';
+const ogDescription =
+  'Your destination for top-rated online casinos, exclusive bonuses, and expert gaming reviews. Join us for the ultimate gaming experience.';
+---
+
+<Layout
+  title={title}
+  description={description}
+  ogTitle={ogTitle}
+  ogDescription={ogDescription}
+  canonicalUrl="/"
+>
+  <!-- Modern Coming Soon Page -->
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800">
+    <div class="container mx-auto px-4 py-16">
+      <div class="max-w-4xl mx-auto text-center">
+        <!-- Logo/Brand -->
+        <div class="mb-8">
+          <h1 class="text-6xl md:text-8xl font-bold text-white mb-4">
+            🎮 TopComGames
+          </h1>
+          <div class="h-1 w-32 bg-gradient-to-r from-pink-500 to-purple-500 mx-auto rounded-full"></div>
+        </div>
+
+        <!-- Tagline -->
+        <p class="text-2xl md:text-4xl text-white font-light mb-6">
+          Your Premium Gaming Destination
+        </p>
+
+        <p class="text-xl text-purple-200 mb-12">
+          Launching Soon with Exclusive Casino Reviews & Bonuses
+        </p>
+
+        <!-- Status Card -->
+        <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8 mb-12 border border-white border-opacity-20">
+          <h2 class="text-3xl font-bold text-white mb-6">What We're Building</h2>
+
+          <div class="grid md:grid-cols-3 gap-6 text-left">
+            <!-- Feature 1 -->
+            <div class="bg-white bg-opacity-5 rounded-xl p-6 hover:bg-opacity-10 transition-all">
+              <div class="text-4xl mb-3">🎰</div>
+              <h3 class="text-xl font-bold text-white mb-2">Top Casino Reviews</h3>
+              <p class="text-purple-200">Curated reviews of the best online casinos</p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="bg-white bg-opacity-5 rounded-xl p-6 hover:bg-opacity-10 transition-all">
+              <div class="text-4xl mb-3">💰</div>
+              <h3 class="text-xl font-bold text-white mb-2">Exclusive Bonuses</h3>
+              <p class="text-purple-200">Special offers you won't find anywhere else</p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="bg-white bg-opacity-5 rounded-xl p-6 hover:bg-opacity-10 transition-all">
+              <div class="text-4xl mb-3">⭐</div>
+              <h3 class="text-xl font-bold text-white mb-2">Expert Ratings</h3>
+              <p class="text-purple-200">Honest reviews from gaming professionals</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Server Status -->
+        <div class="bg-green-500 bg-opacity-20 border-2 border-green-400 rounded-xl p-6 mb-12">
+          <div class="flex items-center justify-center gap-3">
+            <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+            <p class="text-white text-lg font-semibold">
+              Server Status: <span class="text-green-300">Online & Ready</span>
+            </p>
+          </div>
+          <p class="text-purple-200 mt-2 text-sm">
+            Secured with HTTPS • Powered by Njalla
+          </p>
+        </div>
+
+        <!-- Coming Soon Message -->
+        <div class="text-purple-200 space-y-2">
+          <p class="text-lg">🚀 Platform launching soon</p>
+          <p class="text-sm">Watch this space for updates!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-8">
+    <div class="container mx-auto px-4 text-center">
+      <div class="mb-4">
+        <p class="text-sm text-gray-400 mb-4">
+          18+ Only • Gamble Responsibly • BeGambleAware.org
+        </p>
+        <div class="flex gap-4 justify-center text-sm">
+          <a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>
+          <span class="text-gray-600">|</span>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a>
+          <span class="text-gray-600">|</span>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors">Responsible Gaming</a>
+        </div>
+      </div>
+      <p class="text-sm text-gray-500">
+        &copy; {new Date().getFullYear()} TopComGames. All rights reserved.
+      </p>
+    </div>
+  </footer>
+</Layout>
