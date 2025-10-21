@@ -1,23 +1,14 @@
 # UK Casino Comparison Site
 
-A comprehensive UK casino comparison platform built with Astro, React, and PostgreSQL.
+Astro-based casino comparison website with advanced features including SSR, CSP security, and optimized performance.
 
-## Features
+## Technology Stack
 
-- 🎰 Real-time casino offers and bonuses
-- 🔍 Interactive filtering and sorting
-- 📱 Responsive mobile-first design
-- 🎯 Dynamic PPC landing pages
-- 🔒 Content Security Policy (CSP) implementation
-- 💰 Affiliate tracking integration
-
-## Tech Stack
-
-- **Frontend**: Astro 5, React 18, TypeScript
-- **Styling**: Tailwind CSS, Shadcn/UI
-- **Database**: PostgreSQL (Neon), Drizzle ORM
-- **Deployment**: Netlify with Edge Functions
-- **Authentication**: JWT with HTTP-only cookies
+- **Framework**: Astro 5.x with SSR
+- **Styling**: Tailwind CSS
+- **Deployment**: Netlify
+- **Security**: Content Security Policy (CSP) with hash-based validation
+- **Database**: Drizzle ORM (configured)
 
 ## Quick Start
 
@@ -25,46 +16,75 @@ A comprehensive UK casino comparison platform built with Astro, React, and Postg
 # Install dependencies
 npm install
 
-# Start development server (recommended)
-netlify dev
-
-# Or use basic Astro dev server
+# Run development server
 npm run dev
 
 # Build for production
 npm run build
+
+# Preview production build
+npm run preview
 ```
 
-## Database Setup
+## Project Structure
 
-```bash
-# Apply schema changes
-npm run db:push
-
-# Seed casino data
-npm run db:seed-casinos
-
-# Seed landing pages
-npm run db:seed-landing
+```
+bestcomp/
+├── src/
+│   ├── components/     # Reusable Astro components
+│   ├── layouts/        # Page layouts
+│   ├── pages/          # Route pages
+│   ├── styles/         # Global styles
+│   └── utils/          # Utility functions
+├── public/             # Static assets
+├── docs/               # Project documentation
+└── scripts/            # Build and utility scripts
 ```
 
-## Development
+## Documentation
 
-See `CLAUDE.md` for comprehensive technical documentation and development guidelines.
+See `docs/` directory for comprehensive documentation:
+- **Development**: Astro patterns, hydration best practices
+- **Security**: CSP implementation, security headers
+- **Deployment**: Netlify configuration, deployment workflows
 
-## Security
+See also: `CLAUDE.md` for AI assistant context and project guidelines.
 
-This project implements Content Security Policy (CSP) following Astro best practices:
+## Development Guidelines
 
-- No `unsafe-inline` directives
-- External resources properly configured
-- CSS classes instead of inline styles
+- Follow Astro best practices for component architecture
+- Use TypeScript for type safety
+- Implement CSP-compliant code (no `unsafe-inline`)
+- Test builds locally with `npm run preview` before deploying
+- Document significant changes in appropriate docs/ files
 
-## Compliance
+## Key Features
 
-Built for UK gambling advertising standards with:
+- Server-Side Rendering (SSR) on Netlify
+- Content Security Policy with automatic hash generation
+- Mobile-responsive design
+- Optimized performance and SEO
+- Clean URL structure with redirects
 
-- 18+ age verification prompts
-- Responsible gambling information
-- Comprehensive terms and conditions
-- Regulatory compliance features
+## Configuration Files
+
+- `astro.config.mjs` - Astro configuration with experimental features
+- `tailwind.config.ts` - Tailwind CSS configuration
+- `netlify.toml` - Netlify deployment settings
+- `drizzle.config.ts` - Database configuration
+
+## Scripts
+
+See `scripts/` directory for utility scripts:
+- Build automation
+- Content generation
+- Optimization tools
+
+## Related Documentation
+
+- **Parent Project**: `@../docs/` - Server and infrastructure docs
+- **Module Context**: `CLAUDE.md` - AI assistant guidelines
+- **Detailed Docs**: `docs/` - Technical documentation
+
+---
+*Last updated: October 21, 2025*

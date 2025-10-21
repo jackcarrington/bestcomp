@@ -1,5 +1,17 @@
 # UK Casino Comparison Site - Technical Documentation
 
+## 📚 Parent Documentation References
+
+This module is part of the CasinoZap Njalla Server project. See parent documentation:
+- **Project Overview**: `@../docs/architecture/PROJECT_OVERVIEW.md`
+- **Deployment Workflow**: `@../docs/deployment/DEPLOYMENT_WORKFLOW.md`
+- **Coding Standards**: `@../docs/standards/CODING_STANDARDS.md`
+- **Security Practices**: `@../docs/security/SECURITY_PRACTICES.md`
+
+The sections below contain bestcomp-specific technical documentation and standards.
+
+---
+
 ## ⚠️ CRITICAL: Documentation Verification Protocol
 
 **🔍 ALWAYS VERIFY WITH OFFICIAL DOCS BEFORE IMPLEMENTING FIXES**
